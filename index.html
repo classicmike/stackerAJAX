@@ -26,26 +26,38 @@
 				<input type="submit" value="Submit">
 			</form>
 			<h3>View the Top Answerers for a Tag</h3>
-			<form class="inspiration-getter" onsubmit="return false;">
+			<form id="inspiration-getter" class="inspiration-getter" onsubmit="return false;">
 				<input type="text" placeholder="e.g., jQuery" name="answerers" size="30"  required>
 				<input type="submit" value="Submit">
 			</form>
 		</div>
 		<div class="results-container">
 			<div class="search-results"></div>
-			<div class="results"></div>
+			<div id="results" class="results"></div>
 		</div>
 	</div>
-	<div class="templates hidden">
+	<div id="templates" class="templates hidden">
 		<dl class="result question">
 			<dt>Question</dt>
-				<dd class="question-text"><a href="" target="_blank"></a></dd>
+            <dd class="question-text"><a href="" target="_blank"></a></dd>
 			<dt>Asked</dt>
-				<dd class="asked-date"></dd>
+            <dd class="asked-date"></dd>
 			<dt>Viewed</dt>
-				<dd class="viewed"></dd>
+            <dd class="viewed"></dd>
 			<dt>Asker</dt>
-				<dd class="asker"></dd>
+            <dd class="asker"></dd>
+		</dl>
+		<dl class="result answerer">
+			<dt>User:</dt>
+            <dd class="username"></dd>
+			<dt>Reputation:</dt>
+            <dd class="reputation"></dd>
+			<dt>Score:</dt>
+            <dd class="score"></dd>
+			<dt>Acceptance Rate</dt>
+            <dd class="acceptance-rate"></dd>
+			<dt>Posts:</dt>
+            <dd class="posts-number"></dd>
 		</dl>
 		<div class="error">
 			<p>Uh-oh! Something went wrong with your request. Here's what we know:</p>

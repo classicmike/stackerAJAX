@@ -1,19 +1,26 @@
 $(document).ready( function() {
 	$('.unanswered-getter').submit( function(event){
 		// zero out results if previous search has run
-		$('.results').html('');
+		emptyResults();
 		// get the value of the tags the user submitted
 		var tags = $(this).find("input[name='tags']").val();
 		getUnanswered(tags);
 	});
+
+    $(INSPIRATION_GETTER_SELECTOR).submit(processInspirationSubmit.bind(null));
 });
+
+var emptyResults = function(){
+    $('.results').html('');
+};
+
 
 // this function takes the question object returned by StackOverflow 
 // and creates new result to be appended to DOM
 var showQuestion = function(question) {
 	
 	// clone our result template code
-	var result = $('.templates .question').clone();
+	var result = $(QUESTIONS_SELECTOR).clone();
 	
 	// Set the question properties in result
 	var questionElem = result.find('.question-text a');
@@ -41,12 +48,62 @@ var showQuestion = function(question) {
 	return result;
 };
 
+var showAnswerer = function(answerer){
+    var resultHTML = $(ANSWERER_SELECTOR).clone();
+    var user = answerer.user;
+    resultHTML.find(USERNAME_SELECTOR).text(user.display_name);
+    resultHTML.find(REPUTATION_SELECTOR).text(user.reputation);
+    resultHTML.find(SCORE_SELECTOR).text(result.score);
+};
+
+var processInspirationSubmit = function(event){
+    var inputElement = $(event.target);
+    emptyResults();
+    var tags = inputElement.find(ANSWERERS_INPUT_SELECTOR).val();
+
+    getInspiration(tags);
+};
+
+
+var getInspiration = function(tags){
+    console.log(tags);
+
+    var result  = $.get({
+        url: ANSWERERS_API_URL + '/tags/' + tags + '/top-answerers/' + ALL_TIME_PARAMETER + '?site=' + STACK_OVERFLOW
+    }).done(processAnswerersResults.bind(null, tags))
+    .fail(processError.bind(null));
+
+};
+
+var processAnswerersResults = function(tag, result){
+    var items = result.items;
+    var resultNumber = items.length;
+
+    showSearchResults(tag, resultNumber);
+
+    for(var i =0; i < items.length; i++){
+        var item = items[i];
+
+        var answererHTML = showAnswerer(answerer);
+        renderResult(answererHTML);
+    }
+};
+
+var processError = function(jqXHR, error, errorThrown){
+    var errorElem = showError(error);
+    $(SEARCH_RESULTS_SELECTOR).append(errorElem);
+};
+
 
 // this function takes the results object from StackOverflow
 // and creates info about search results to be appended to DOM
 var showSearchResults = function(query, resultNum) {
 	var results = resultNum + ' results for <strong>' + query;
 	return results;
+};
+
+var renderResult = function(html){
+    $(RESULTS_SELECTOR).append(html);
 };
 
 // takes error string and turns it into displayable DOM element
@@ -88,5 +145,17 @@ var getUnanswered = function(tags) {
 	});
 };
 
+var ANSWERER_SELECTOR = '#templates .answerer';
+var QUESTIONS_SELECTOR = '#templates .question';
+var INSPIRATION_GETTER_SELECTOR = '#inspiration-getter';
+var RESULTS_SELECTOR = '#results';
+var ANSWERERS_INPUT_SELECTOR = 'input[name="answerers"]';
+var STACK_OVERFLOW =  'stackoverflow';
+var ALL_TIME_PARAMETER =  'all_time';
+var ANSWERERS_API_URL = 'http://api.stackexchange.com/2.2/';
+var SEARCH_RESULTS_SELECTOR = '.search-results';
+var USERNAME_SELECTOR = '.username';
+var REPUTATION_SELECTOR = '.reputation';
+var SCORE_SELECTOR = '.score';
 
 
